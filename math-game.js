@@ -179,6 +179,8 @@ let questionCount = 0;
 let inMenu = true; // Track if the game is in the menu state
 let maxQuestions = 10; // Default number of questions
 let silentMode = false; // Default silent mode off
+let timerInterval;
+let timeLeft = 10; // Time for each question in seconds
 
 // Define sounds
 const correctSound = tune`
@@ -228,6 +230,7 @@ const updateQuestion = () => {
   displayQuestionAndAnswers();
   feedbackMessage = "";
   questionCount++;
+  startTimer();
 };
 
 // Function to display scores
@@ -259,21 +262,12 @@ const displayQuestionAndAnswers = () => {
 
 // Function to check the answer
 const checkAnswer = (player, answerIndex) => {
+  clearInterval(timerInterval); // Stop the timer
   if (currentQuestion.answers[answerIndex] === currentQuestion.correct) {
     if (player === 'left') {
       leftPlayerScore++;
-      setMap(map`
-LLLLL
-LLLLL
-LLLLL
-LLLLL`);
     } else {
       rightPlayerScore++;
-      setMap(map`
-RRRRR
-RRRRR
-RRRRR
-RRRRR`);
     }
     feedbackMessage = "Correct!";
     if (!silentMode) playTune(correctSound);
@@ -281,26 +275,8 @@ RRRRR`);
     feedbackMessage = "Wrong!";
     if (player === 'left') {
       leftPlayerScore = Math.max(0, leftPlayerScore - 1); // Decrease score but not below zero
-      setMap(map`
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR`);
     } else {
       rightPlayerScore = Math.max(0, rightPlayerScore - 1); // Decrease score but not below zero
-      setMap(map`
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY
-AAAAAYYYYY`);
     }
     if (!silentMode) playTune(incorrectSound);
   }
@@ -320,8 +296,29 @@ const displayFeedbackAndNextQuestion = () => {
   }, 500); // 0.5-second delay
 };
 
+// Function to start the timer
+const startTimer = () => {
+  timeLeft = 10;
+  displayTimer();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    displayTimer();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      feedbackMessage = "Time's up!";
+      displayFeedbackAndNextQuestion();
+    }
+  }, 1000); // Update every second
+};
+
+// Function to display the timer
+const displayTimer = () => {
+  addText(`Time:${timeLeft}`, { x: 7, y: 0, color: color`2` });
+};
+
 // Function to end the game
 const endGame = () => {
+  clearInterval(timerInterval); // Stop the timer
   clearText();
   if (!silentMode) playTune(gameOverSound);
   setMap(initialMap)
@@ -341,8 +338,9 @@ const showMenu = () => {
   setMap(menuMap);
   addText("Math Quiz Game", { x: 3, y: 2, color: color`3` });
   addText("Made by Zigao Wang", { x: 1, y: 5, color: color`7` });
+  addText("Use A/D to change rounds", { x: 1, y: 7, color: color`2` });
   addText(`Rounds: <${maxQuestions}>`, { x: 4, y: 9, color: color`2` });
-  addText(`Silent: ${silentMode ? "On" : "Off"}(S)`, { x: 3, y: 11, color: color`2` });
+  addText(`Silent: ${silentMode ? "On" : "Off"} (S)`, { x: 3, y: 11, color: color`2` });
   addText("Press 'W' to Start", { x: 1, y: 14, color: color`2` });
 };
 
