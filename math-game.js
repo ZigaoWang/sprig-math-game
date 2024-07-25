@@ -131,31 +131,20 @@ setLegend(
 
 // Create initial map and menu map
 const initialMap = `
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR
-LLLLLLRRRRRR`;
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR
+LLLLLRRRRR`;
 
 const menuMap = `
-................
-................
-................
-................
-................
-................
-................
-................
-................
-................
-................
-................
-................`;
+.....
+.....
+.....
+.....`;
 
 const questions = [
   { question: "2 + 2", answers: [3, 4, 5, 6], correct: 4 },
@@ -261,29 +250,17 @@ const checkAnswer = (player, answerIndex) => {
     if (player === 'left') {
       leftPlayerScore++;
       setMap(map`
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL
-LLLLLLLLLLLL`);
+LLLLL
+LLLLL
+LLLLL
+LLLLL`);
     } else {
       rightPlayerScore++;
       setMap(map`
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR
-RRRRRRRRRRRR`);
+RRRRR
+RRRRR
+RRRRR
+RRRRR`);
     }
     feedbackMessage = "Correct!";
     playTune(correctSound);
@@ -291,28 +268,24 @@ RRRRRRRRRRRR`);
     feedbackMessage = "Wrong!";
     if (player === 'left') {
       setMap(map`
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR
-XXXXXXRRRRRR`);
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR`);
     } else {
       setMap(map`
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY
-LLLLLLYYYYYY`);
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY`);
     }
     playTune(incorrectSound);
   }
@@ -336,6 +309,7 @@ const displayFeedbackAndNextQuestion = () => {
 const endGame = () => {
   clearText();
   playTune(gameOverSound);
+  setMap(initialMap)
   addText("Game Over", { x: 6, y: 6, color: color`2` });
   addText(`Score: ${leftPlayerScore}:${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
 
