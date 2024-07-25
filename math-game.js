@@ -141,10 +141,22 @@ LLLLLRRRRR
 LLLLLRRRRR`;
 
 const menuMap = `
-.....
-.....
-.....
-.....`;
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+....................
+LLLLLLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLLLLLL
+LLLLLLLLLLLLLLLLLLLL
+RRRRRRRRRRRRRRRRRRRR
+RRRRRRRRRRRRRRRRRRRR
+RRRRRRRRRRRRRRRRRRRR`;
 
 const questions = [
   { question: "2 + 2", answers: [3, 4, 5, 6], correct: 4 },
@@ -163,9 +175,10 @@ let leftPlayerScore = 0;
 let rightPlayerScore = 0;
 let currentQuestion = {};
 let feedbackMessage = "";
-const maxQuestions = 10;
 let questionCount = 0;
 let inMenu = true; // Track if the game is in the menu state
+let maxQuestions = 10; // Default number of questions
+let silentMode = false; // Default silent mode off
 
 // Define sounds
 const correctSound = tune`
@@ -263,7 +276,7 @@ RRRRR
 RRRRR`);
     }
     feedbackMessage = "Correct!";
-    playTune(correctSound);
+    if (!silentMode) playTune(correctSound);
   } else {
     feedbackMessage = "Wrong!";
     if (player === 'left') {
@@ -287,7 +300,7 @@ AAAAAYYYYY
 AAAAAYYYYY
 AAAAAYYYYY`);
     }
-    playTune(incorrectSound);
+    if (!silentMode) playTune(incorrectSound);
   }
 
   displayFeedbackAndNextQuestion();
@@ -308,7 +321,7 @@ const displayFeedbackAndNextQuestion = () => {
 // Function to end the game
 const endGame = () => {
   clearText();
-  playTune(gameOverSound);
+  if (!silentMode) playTune(gameOverSound);
   setMap(initialMap)
   addText("Game Over", { x: 6, y: 6, color: color`2` });
   addText(`Score: ${leftPlayerScore}:${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
@@ -316,7 +329,7 @@ const endGame = () => {
   // Return to menu after a delay
   setTimeout(() => {
     showMenu();
-  }, 5000); // 5-second delay
+  }, 3000); // 3-second delay
 };
 
 // Function to show the game menu
@@ -324,9 +337,11 @@ const showMenu = () => {
   inMenu = true;
   clearText();
   setMap(menuMap);
-  addText("Math Quiz Game", { x: 3, y: 4, color: color`3` });
-  addText("Made by Zigao Wang", { x: 1, y: 6, color: color`7` });
-  addText("Press 'W' to Start", { x: 1, y: 12, color: color`0` });
+  addText("Math Quiz Game", { x: 3, y: 2, color: color`3` });
+  addText("Made by Zigao Wang", { x: 1, y: 5, color: color`7` });
+  addText(`Rounds: <${maxQuestions}>`, { x: 4, y: 9, color: color`2` });
+  addText(`Silent: ${silentMode ? "On" : "Off"}(S)`, { x: 3, y: 11, color: color`2` });
+  addText("Press 'W' to Start", { x: 1, y: 14, color: color`0` });
 };
 
 // Function to start the game
@@ -335,7 +350,7 @@ const startGame = () => {
   leftPlayerScore = 0;
   rightPlayerScore = 0;
   questionCount = 0;
-  playTune(startSound);
+  if (!silentMode) playTune(startSound);
   updateQuestion();
 };
 
@@ -357,6 +372,28 @@ onInput("i", () => { if (!inMenu) checkAnswer('right', 0); });
 onInput("j", () => { if (!inMenu) checkAnswer('right', 1); });
 onInput("k", () => { if (!inMenu) checkAnswer('right', 2); });
 onInput("l", () => { if (!inMenu) checkAnswer('right', 3); });
+
+// Input handlers for adjusting rounds and toggling silent mode in the menu
+onInput("a", () => {
+  if (inMenu) {
+    maxQuestions = maxQuestions === 5 ? 50 : maxQuestions === 10 ? 5 : maxQuestions === 15 ? 10 : maxQuestions === 20 ? 15 : maxQuestions === 30 ? 20 : maxQuestions === 50 ? 30 : maxQuestions;
+    showMenu();
+  }
+});
+
+onInput("d", () => {
+  if (inMenu) {
+    maxQuestions = maxQuestions === 5 ? 10 : maxQuestions === 10 ? 15 : maxQuestions === 15 ? 20 : maxQuestions === 20 ? 30 : maxQuestions === 30 ? 50 : maxQuestions === 50 ? 5 : maxQuestions;
+    showMenu();
+  }
+});
+
+onInput("s", () => {
+  if (inMenu) {
+    silentMode = !silentMode;
+    showMenu();
+  }
+});
 
 // Show the game menu initially
 showMenu();
