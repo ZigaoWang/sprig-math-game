@@ -4,7 +4,7 @@ const questionText = "Q";
 const answerOption = "A";
 const leftCross = "X";
 const rightCross = "Y";
-const menuOption = "M";
+const timeoutGraphic = "T";
 
 // Define sprites
 setLegend(
@@ -110,7 +110,7 @@ setLegend(
 3777333333337773
 7773333333333777
 7733333333333377`],
-  [menuOption, bitmap`
+  [timeoutGraphic, bitmap`
 7777777777777777
 7777777777777777
 7777777777777777
@@ -196,12 +196,19 @@ const gameOverSound = tune`
 120: C4/120,
 120: C4/120,
 3240`;
+const newQuestionSound = tune`
+120: A4-120,
+120: B4-120,
+120: C5-120,
+120: D5-120,
+120: E5-120,
+3240`;
 
 // Function to generate a random math question
 const generateRandomQuestion = () => {
-  const num1 = Math.floor(Math.random() * 10) + 1;
+  let num1 = Math.floor(Math.random() * 10) + 1;
   const num2 = Math.floor(Math.random() * 10) + 1;
-  const operators = ['+', '-', '*'];
+  const operators = ['+', '-', '*', '/'];
   const operator = operators[Math.floor(Math.random() * operators.length)];
   let correctAnswer;
   
@@ -214,6 +221,10 @@ const generateRandomQuestion = () => {
       break;
     case '*':
       correctAnswer = num1 * num2;
+      break;
+    case '/':
+      correctAnswer = num1; // Ensure integer result for division
+      num1 = num1 * num2; // Adjust num1 to be a multiple of num2
       break;
   }
 
@@ -251,6 +262,7 @@ const updateQuestion = () => {
   feedbackMessage = "";
   questionCount++;
   startTimer();
+  if (!silentMode) playTune(newQuestionSound);
 };
 
 // Function to display scores
@@ -357,14 +369,14 @@ const startTimer = () => {
       leftPlayerScore = Math.max(0, leftPlayerScore - 1); // Decrease score but not below zero
       rightPlayerScore = Math.max(0, rightPlayerScore - 1); // Decrease score but not below zero
       setMap(map`
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR
-XXXXXRRRRR`);
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT
+TTTTTTTTTT`);
       displayFeedbackAndNextQuestion();
     }
   }, 1000); // Update every second
@@ -372,7 +384,7 @@ XXXXXRRRRR`);
 
 // Function to display the timer
 const displayTimer = () => {
-  addText(`Time: ${timeLeft}`, { x: 7, y: 0, color: color`2` });
+  addText(`Time:${timeLeft}`, { x: 7, y: 0, color: color`2` });
 };
 
 // Function to end the game
@@ -397,6 +409,7 @@ const showMenu = () => {
   setMap(menuMap);
   addText("Math Quiz Game", { x: 3, y: 2, color: color`3` });
   addText("Made by Zigao Wang", { x: 1, y: 5, color: color`7` });
+  addText("Use A/D to change rounds", { x: 1, y: 7, color: color`2` });
   addText(`Rounds: <${maxQuestions}>`, { x: 4, y: 9, color: color`2` });
   addText(`Silent: ${silentMode ? "On" : "Off"} (S)`, { x: 3, y: 11, color: color`2` });
   addText("Press 'W' to Start", { x: 1, y: 14, color: color`2` });
