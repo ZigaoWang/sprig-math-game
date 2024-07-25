@@ -152,6 +152,9 @@ const menuMap = `
 ................
 ................
 ................
+................
+................
+................
 ................`;
 
 const questions = [
@@ -177,21 +180,31 @@ let inMenu = true; // Track if the game is in the menu state
 
 // Define sounds
 const correctSound = tune`
-500: c4~500,
-500: d4~500,
-500: e4~500`;
+120: C5-120,
+120: D5-120,
+120: A5-120,
+120: B5-120,
+3360`;
 const incorrectSound = tune`
-500: e4~500,
-500: d4~500,
-500: c4~500`;
+120: B5/120,
+120: A5/120,
+120: D5/120,
+120: C5/120,
+3360`;
 const startSound = tune`
-500: g4~500,
-500: a4~500,
-500: b4~500`;
+120: E5-120,
+120: D5-120,
+120: C5-120,
+120: D5-120,
+120: A5-120,
+3240`;
 const gameOverSound = tune`
-500: g4-500,
-500: f4-500,
-500: e4-500`;
+120: G4-120,
+120: F4-120,
+120: E4-120,
+120: C4/120,
+120: C4/120,
+3240`;
 
 // Function to get a random question
 const getRandomQuestion = () => {
