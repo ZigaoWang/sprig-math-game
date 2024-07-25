@@ -175,6 +175,24 @@ const maxQuestions = 10;
 let questionCount = 0;
 let inMenu = true; // Track if the game is in the menu state
 
+// Define sounds
+const correctSound = tune`
+500: c4~500,
+500: d4~500,
+500: e4~500`;
+const incorrectSound = tune`
+500: e4~500,
+500: d4~500,
+500: c4~500`;
+const startSound = tune`
+500: g4~500,
+500: a4~500,
+500: b4~500`;
+const gameOverSound = tune`
+500: g4-500,
+500: f4-500,
+500: e4-500`;
+
 // Function to get a random question
 const getRandomQuestion = () => {
   const index = Math.floor(Math.random() * questions.length);
@@ -255,6 +273,7 @@ RRRRRRRRRRRR
 RRRRRRRRRRRR`);
     }
     feedbackMessage = "Correct!";
+    playTune(correctSound);
   } else {
     feedbackMessage = "Wrong!";
     if (player === 'left') {
@@ -282,6 +301,7 @@ LLLLLLYYYYYY
 LLLLLLYYYYYY
 LLLLLLYYYYYY`);
     }
+    playTune(incorrectSound);
   }
 
   displayFeedbackAndNextQuestion();
@@ -302,13 +322,14 @@ const displayFeedbackAndNextQuestion = () => {
 // Function to end the game
 const endGame = () => {
   clearText();
+  playTune(gameOverSound);
   addText("Game Over", { x: 6, y: 6, color: color`2` });
   addText(`Score: ${leftPlayerScore} - ${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
 
   // Return to menu after a delay
   setTimeout(() => {
     showMenu();
-  }, 2000); // 5-second delay
+  }, 5000); // 5-second delay
 };
 
 // Function to show the game menu
@@ -327,6 +348,7 @@ const startGame = () => {
   leftPlayerScore = 0;
   rightPlayerScore = 0;
   questionCount = 0;
+  playTune(startSound);
   updateQuestion();
 };
 
