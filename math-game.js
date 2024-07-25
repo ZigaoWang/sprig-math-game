@@ -158,19 +158,6 @@ RRRRRRRRRRRRRRRRRRRR
 RRRRRRRRRRRRRRRRRRRR
 RRRRRRRRRRRRRRRRRRRR`;
 
-const questions = [
-  { question: "2 + 2", answers: [3, 4, 5, 6], correct: 4 },
-  { question: "3 + 5", answers: [8, 7, 6, 5], correct: 8 },
-  { question: "6 - 1", answers: [5, 4, 3, 2], correct: 5 },
-  { question: "9 / 3", answers: [1, 2, 3, 4], correct: 3 },
-  { question: "5 * 2", answers: [10, 9, 8, 7], correct: 10 },
-  { question: "12 + 15", answers: [25, 26, 27, 28], correct: 27 },
-  { question: "7 * 8", answers: [54, 55, 56, 57], correct: 56 },
-  { question: "15 / 3", answers: [4, 5, 6, 7], correct: 5 },
-  { question: "18 - 9", answers: [7, 8, 9, 10], correct: 9 },
-  { question: "45 + 55", answers: [90, 95, 100, 105], correct: 100 }
-];
-
 let leftPlayerScore = 0;
 let rightPlayerScore = 0;
 let currentQuestion = {};
@@ -180,7 +167,7 @@ let inMenu = true; // Track if the game is in the menu state
 let maxQuestions = 10; // Default number of questions
 let silentMode = false; // Default silent mode off
 let timerInterval;
-let timeLeft = 10; // Time for each question in seconds
+let timeLeft = 5; // Time for each question in seconds
 
 // Define sounds
 const correctSound = tune`
@@ -210,10 +197,43 @@ const gameOverSound = tune`
 120: C4/120,
 3240`;
 
-// Function to get a random question
-const getRandomQuestion = () => {
-  const index = Math.floor(Math.random() * questions.length);
-  return questions[index];
+// Function to generate a random math question
+const generateRandomQuestion = () => {
+  const num1 = Math.floor(Math.random() * 10) + 1;
+  const num2 = Math.floor(Math.random() * 10) + 1;
+  const operators = ['+', '-', '*'];
+  const operator = operators[Math.floor(Math.random() * operators.length)];
+  let correctAnswer;
+  
+  switch (operator) {
+    case '+':
+      correctAnswer = num1 + num2;
+      break;
+    case '-':
+      correctAnswer = num1 - num2;
+      break;
+    case '*':
+      correctAnswer = num1 * num2;
+      break;
+  }
+
+  const question = `${num1} ${operator} ${num2}`;
+  const answers = generateRandomAnswers(correctAnswer);
+
+  return { question, answers, correct: correctAnswer };
+};
+
+// Function to generate random answers
+const generateRandomAnswers = (correctAnswer) => {
+  const answers = new Set();
+  answers.add(correctAnswer);
+
+  while (answers.size < 4) {
+    const randomAnswer = Math.floor(Math.random() * 20) + 1;
+    answers.add(randomAnswer);
+  }
+
+  return Array.from(answers).sort(() => Math.random() - 0.5);
 };
 
 // Function to update the question and answers
@@ -223,7 +243,7 @@ const updateQuestion = () => {
     return;
   }
 
-  currentQuestion = getRandomQuestion();
+  currentQuestion = generateRandomQuestion();
   clearText();
   setMap(initialMap);
   displayScores();
@@ -266,8 +286,18 @@ const checkAnswer = (player, answerIndex) => {
   if (currentQuestion.answers[answerIndex] === currentQuestion.correct) {
     if (player === 'left') {
       leftPlayerScore++;
+      setMap(map`
+LLLLL
+LLLLL
+LLLLL
+LLLLL`);
     } else {
       rightPlayerScore++;
+      setMap(map`
+RRRRR
+RRRRR
+RRRRR
+RRRRR`);
     }
     feedbackMessage = "Correct!";
     if (!silentMode) playTune(correctSound);
@@ -275,8 +305,26 @@ const checkAnswer = (player, answerIndex) => {
     feedbackMessage = "Wrong!";
     if (player === 'left') {
       leftPlayerScore = Math.max(0, leftPlayerScore - 1); // Decrease score but not below zero
+      setMap(map`
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR`);
     } else {
       rightPlayerScore = Math.max(0, rightPlayerScore - 1); // Decrease score but not below zero
+      setMap(map`
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY
+AAAAAYYYYY`);
     }
     if (!silentMode) playTune(incorrectSound);
   }
@@ -298,7 +346,7 @@ const displayFeedbackAndNextQuestion = () => {
 
 // Function to start the timer
 const startTimer = () => {
-  timeLeft = 10;
+  timeLeft = 5;
   displayTimer();
   timerInterval = setInterval(() => {
     timeLeft--;
@@ -306,6 +354,17 @@ const startTimer = () => {
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       feedbackMessage = "Time's up!";
+      leftPlayerScore = Math.max(0, leftPlayerScore - 1); // Decrease score but not below zero
+      rightPlayerScore = Math.max(0, rightPlayerScore - 1); // Decrease score but not below zero
+      setMap(map`
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR
+XXXXXRRRRR`);
       displayFeedbackAndNextQuestion();
     }
   }, 1000); // Update every second
@@ -313,7 +372,7 @@ const startTimer = () => {
 
 // Function to display the timer
 const displayTimer = () => {
-  addText(`Time:${timeLeft}`, { x: 7, y: 0, color: color`2` });
+  addText(`Time: ${timeLeft}`, { x: 7, y: 0, color: color`2` });
 };
 
 // Function to end the game
@@ -338,7 +397,6 @@ const showMenu = () => {
   setMap(menuMap);
   addText("Math Quiz Game", { x: 3, y: 2, color: color`3` });
   addText("Made by Zigao Wang", { x: 1, y: 5, color: color`7` });
-  addText("Use A/D to change rounds", { x: 1, y: 7, color: color`2` });
   addText(`Rounds: <${maxQuestions}>`, { x: 4, y: 9, color: color`2` });
   addText(`Silent: ${silentMode ? "On" : "Off"} (S)`, { x: 3, y: 11, color: color`2` });
   addText("Press 'W' to Start", { x: 1, y: 14, color: color`2` });
