@@ -337,7 +337,7 @@ const endGame = () => {
   clearText();
   playTune(gameOverSound);
   addText("Game Over", { x: 6, y: 6, color: color`2` });
-  addText(`Score: ${leftPlayerScore} - ${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
+  addText(`Score: ${leftPlayerScore}:${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
 
   // Return to menu after a delay
   setTimeout(() => {
