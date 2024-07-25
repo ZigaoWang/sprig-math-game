@@ -229,10 +229,10 @@ const displayQuestionAndAnswers = () => {
   addText(currentQuestion.question, { x: 7, y: 3, color: color`2` });
 
   // Left player answers
-  addText(`${currentQuestion.answers[0]}`, { x: 4, y: 5, color: color`3` });
-  addText(`${currentQuestion.answers[1]}`, { x: 2, y: 7, color: color`3` });
-  addText(`${currentQuestion.answers[2]}`, { x: 4, y: 9, color: color`3` });
-  addText(`${currentQuestion.answers[3]}`, { x: 6, y: 7, color: color`3` });
+  addText(`${currentQuestion.answers[0]}`, { x: 4, y: 5, color: color`6` });
+  addText(`${currentQuestion.answers[1]}`, { x: 2, y: 7, color: color`6` });
+  addText(`${currentQuestion.answers[2]}`, { x: 4, y: 9, color: color`6` });
+  addText(`${currentQuestion.answers[3]}`, { x: 6, y: 7, color: color`6` });
 
   // Right player answers
   addText(`${currentQuestion.answers[0]}`, { x: 15, y: 5, color: color`6` });
@@ -324,7 +324,7 @@ const showMenu = () => {
   inMenu = true;
   clearText();
   setMap(menuMap);
-  addText("Math Quiz Game", { x: 3, y: 4, color: color`4` });
+  addText("Math Quiz Game", { x: 3, y: 4, color: color`3` });
   addText("Made by Zigao Wang", { x: 1, y: 6, color: color`7` });
   addText("Press 'W' to Start", { x: 1, y: 12, color: color`0` });
 };
