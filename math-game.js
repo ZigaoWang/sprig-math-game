@@ -173,6 +173,7 @@ let currentQuestion = {};
 let feedbackMessage = "";
 const maxQuestions = 10;
 let questionCount = 0;
+let inMenu = true; // Track if the game is in the menu state
 
 // Function to get a random question
 const getRandomQuestion = () => {
@@ -198,13 +199,14 @@ const updateQuestion = () => {
 
 // Function to display scores
 const displayScores = () => {
-  addText(`Score: ${leftPlayerScore}`, { x: 1, y: 14, color: color`2` });
-  addText(`Score: ${rightPlayerScore}`, { x: 11, y: 14, color: color`2` });
+  addText(`Score:${leftPlayerScore}`, { x: 1, y: 14, color: color`2` });
+  addText(`Score:${rightPlayerScore}`, { x: 11, y: 14, color: color`2` });
+  addText(`Round:${questionCount + 1}/${maxQuestions}`, { x: 5, y: 1, color: color`2` });
 };
 
 // Function to display the question and answers
 const displayQuestionAndAnswers = () => {
-  addText(currentQuestion.question, { x: 8, y: 2, color: color`2` });
+  addText(currentQuestion.question, { x: 7, y: 3, color: color`2` });
 
   // Left player answers
   addText(`${currentQuestion.answers[0]}`, { x: 4, y: 5, color: color`3` });
@@ -294,7 +296,7 @@ const displayFeedbackAndNextQuestion = () => {
   // Add a delay before updating the question
   setTimeout(() => {
     updateQuestion();
-  }, 2000); // 2-second delay
+  }, 500); // 0.5-second delay
 };
 
 // Function to end the game
@@ -306,11 +308,12 @@ const endGame = () => {
   // Return to menu after a delay
   setTimeout(() => {
     showMenu();
-  }, 2000); // 2-second delay
+  }, 2000); // 5-second delay
 };
 
 // Function to show the game menu
 const showMenu = () => {
+  inMenu = true;
   clearText();
   setMap(menuMap);
   addText("Math Quiz Game", { x: 3, y: 4, color: color`4` });
@@ -320,6 +323,7 @@ const showMenu = () => {
 
 // Function to start the game
 const startGame = () => {
+  inMenu = false;
   leftPlayerScore = 0;
   rightPlayerScore = 0;
   questionCount = 0;
@@ -327,18 +331,23 @@ const startGame = () => {
 };
 
 // Input handler for starting the game from the menu
-onInput("w", () => startGame());
+onInput("w", () => {
+  if (inMenu) {
+    startGame();
+  } else {
+    checkAnswer('left', 0);
+  }
+});
 
 // Input handlers for player answers
-onInput("w", () => checkAnswer('left', 0));
-onInput("a", () => checkAnswer('left', 1));
-onInput("s", () => checkAnswer('left', 2));
-onInput("d", () => checkAnswer('left', 3));
+onInput("a", () => { if (!inMenu) checkAnswer('left', 1); });
+onInput("s", () => { if (!inMenu) checkAnswer('left', 2); });
+onInput("d", () => { if (!inMenu) checkAnswer('left', 3); });
 
-onInput("i", () => checkAnswer('right', 0));
-onInput("j", () => checkAnswer('right', 1));
-onInput("k", () => checkAnswer('right', 2));
-onInput("l", () => checkAnswer('right', 3));
+onInput("i", () => { if (!inMenu) checkAnswer('right', 0); });
+onInput("j", () => { if (!inMenu) checkAnswer('right', 1); });
+onInput("k", () => { if (!inMenu) checkAnswer('right', 2); });
+onInput("l", () => { if (!inMenu) checkAnswer('right', 3); });
 
 // Show the game menu initially
 showMenu();
