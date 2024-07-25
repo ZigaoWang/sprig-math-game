@@ -280,6 +280,7 @@ RRRRR`);
   } else {
     feedbackMessage = "Wrong!";
     if (player === 'left') {
+      leftPlayerScore = Math.max(0, leftPlayerScore - 1); // Decrease score but not below zero
       setMap(map`
 XXXXXRRRRR
 XXXXXRRRRR
@@ -290,6 +291,7 @@ XXXXXRRRRR
 XXXXXRRRRR
 XXXXXRRRRR`);
     } else {
+      rightPlayerScore = Math.max(0, rightPlayerScore - 1); // Decrease score but not below zero
       setMap(map`
 AAAAAYYYYY
 AAAAAYYYYY
@@ -341,7 +343,7 @@ const showMenu = () => {
   addText("Made by Zigao Wang", { x: 1, y: 5, color: color`7` });
   addText(`Rounds: <${maxQuestions}>`, { x: 4, y: 9, color: color`2` });
   addText(`Silent: ${silentMode ? "On" : "Off"}(S)`, { x: 3, y: 11, color: color`2` });
-  addText("Press 'W' to Start", { x: 1, y: 14, color: color`0` });
+  addText("Press 'W' to Start", { x: 1, y: 14, color: color`2` });
 };
 
 // Function to start the game
