@@ -164,10 +164,12 @@ let currentQuestion = {};
 let feedbackMessage = "";
 let questionCount = 0;
 let inMenu = true; // Track if the game is in the menu state
+let gameEnded = false; // Track if the game has ended
 let maxQuestions = 10; // Default number of questions
 let silentMode = false; // Default silent mode off
 let timerInterval;
 let timeLeft = 5; // Time for each question in seconds
+let backgroundMusicHandle; // Handle for background music
 
 // Define sounds
 const correctSound = tune`
@@ -203,6 +205,23 @@ const timeoutSound = tune`
 120: B3-120,
 120: A3-120,
 3240`;
+const backgroundMusic = tune`
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500,
+500: G4^500,
+500: E4^500`;
 
 // Function to generate a random math question
 const generateRandomQuestion = () => {
@@ -392,6 +411,7 @@ const endGame = () => {
   clearInterval(timerInterval); // Stop the timer
   clearText();
   if (!silentMode) playTune(gameOverSound);
+  if (backgroundMusicHandle) backgroundMusicHandle.end(); // Stop background music
   setMap(initialMap);
 
   if (leftPlayerScore > rightPlayerScore) {
@@ -405,15 +425,14 @@ const endGame = () => {
   addText(`Score: ${leftPlayerScore}:${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
   addText("Press 'W' to return", { x: 1, y: 10, color: color`2` });
 
-  // Return to menu after a delay
-  setTimeout(() => {
-    showMenu();
-  }, 3000); // 3-second delay
+  // Set gameEnded to true to prevent starting the game immediately on 'W' press
+  gameEnded = true;
 };
 
 // Function to show the game menu
 const showMenu = () => {
   inMenu = true;
+  gameEnded = false;
   clearText();
   setMap(menuMap);
   addText("Math Quiz Game", { x: 3, y: 2, color: color`3` });
@@ -426,16 +445,21 @@ const showMenu = () => {
 // Function to start the game
 const startGame = () => {
   inMenu = false;
+  gameEnded = false;
   leftPlayerScore = 0;
   rightPlayerScore = 0;
   questionCount = 0;
   if (!silentMode) playTune(startSound);
   updateQuestion();
+  // Start background music
+  if (!silentMode) backgroundMusicHandle = playTune(backgroundMusic, Infinity);
 };
 
-// Input handler for starting the game from the menu
+// Input handler for starting the game from the menu or returning to the menu
 onInput("w", () => {
-  if (inMenu) {
+  if (gameEnded) {
+    showMenu();
+  } else if (inMenu) {
     startGame();
   } else {
     checkAnswer('left', 0);
