@@ -1,3 +1,10 @@
+/*
+@title: Math Quiz Game
+@tags: ['math', 'two-players', 'quiz']
+@addedOn: 2024-07-24
+@author: Zigao Wang
+*/
+
 const leftPlayer = "L";
 const rightPlayer = "R";
 const questionText = "Q";
