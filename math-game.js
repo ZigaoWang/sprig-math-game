@@ -196,6 +196,13 @@ const gameOverSound = tune`
 120: C4/120,
 120: C4/120,
 3240`;
+const timeoutSound = tune`
+120: E4-120,
+120: D4-120,
+120: C4-120,
+120: B3-120,
+120: A3-120,
+3240`;
 
 // Function to generate a random math question
 const generateRandomQuestion = () => {
@@ -369,6 +376,7 @@ TTTTTTTTTT
 TTTTTTTTTT
 TTTTTTTTTT
 TTTTTTTTTT`);
+      if (!silentMode) playTune(timeoutSound);
       displayFeedbackAndNextQuestion();
     }
   }, 1000); // Update every second
@@ -384,9 +392,18 @@ const endGame = () => {
   clearInterval(timerInterval); // Stop the timer
   clearText();
   if (!silentMode) playTune(gameOverSound);
-  setMap(initialMap)
-  addText("Game Over", { x: 6, y: 6, color: color`2` });
+  setMap(initialMap);
+
+  if (leftPlayerScore > rightPlayerScore) {
+    addText("Blue Wins!", { x: 6, y: 6, color: color`2` });
+  } else if (rightPlayerScore > leftPlayerScore) {
+    addText("Red Wins!", { x: 6, y: 6, color: color`2` });
+  } else {
+    addText("It's a Tie!", { x: 4, y: 6, color: color`2` });
+  }
+
   addText(`Score: ${leftPlayerScore}:${rightPlayerScore}`, { x: 5, y: 8, color: color`2` });
+  addText("Press 'W' to return", { x: 1, y: 10, color: color`2` });
 
   // Return to menu after a delay
   setTimeout(() => {
